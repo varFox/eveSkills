@@ -1,15 +1,21 @@
-```Сборка проекта
+```
+Сборка проекта
+```
 
 клиент
-### npm run build:client
+### `npm run build:client`
 
 сервер
-### npm run build:server
+### `npm run build:server`
 
-```Запуск проекта
+```
+Запуск проекта
+```
 
-### npm run start
+### `npm run start`
 
-```Ссылка на локалхост
+```
+Ссылка на локалхост
+```
 
-### [http://localhost](http://127.0.0.1:3000)
+### `[http://localhost](http://127.0.0.1:3000)`

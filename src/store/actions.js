@@ -16,7 +16,7 @@ export const fetchUser = () => async dispatch => {
   const response = await axios.get(
     `https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=${process.env.REACT_APP_CALLBACK}&client_id=${process.env.REACT_APP_CLIENT_ID}&scope=${process.env.REACT_APP_SCOPES}`
   );
-
+  
   dispatch({
     type: FETCH_USER,
     payload: response.data
@@ -25,22 +25,14 @@ export const fetchUser = () => async dispatch => {
 
 
 
-export const fetchToken = (code) => async dispatch => {
 
-  const data = {
-    grant_type: 'authorization_code',
-    code: `${code}` 
-  };
-  const config =  {
-    headers: {
-      'Authorization': `Basic ${Base64.encode(`${process.env.REACT_APP_CLIENT_ID}:${process.env.REACT_APP_KEY}`)}`,
-      'Content-Type': 'application/json'
-    }
-  };
-  const response = await axios.post('https://login.eveonline.com/oauth/token', data, config)
-    .then(() => console.log('Всё good'))
-    .catch(err => console.log(err))
-
+export const fetchToken = () => async dispatch => {
+  let response; 
+  await axios.get('http://127.0.0.1:3000/info')
+    .then(res => {
+      if (res.data.character) response = res.data.character;
+    });
+  if(!response) response = '';
   dispatch({
     type: FETCH_TOKEN,
     payload: response
@@ -49,5 +41,20 @@ export const fetchToken = (code) => async dispatch => {
   
 };
 
+export const getCharacterId = (token) => async dispatch => {
 
+  const config =  {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  };
 
+  const response = await axios.get(`https://login.eveonline.com/oauth/verify`, config)
+    .then(res => console.log(res));
+  
+
+  dispatch({
+    type: FETCH_USER,
+    payload: response
+  });
+};

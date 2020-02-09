@@ -1,9 +1,10 @@
 import Home from './pages/Home';
 import About from './pages/About';
-import User from './pages/User';
 import NotFound from './pages/NotFound';
 import App from './App';
 import Login from './pages/Login';
+import Callback from './pages/Callback';
+
 
 export default [
   {
@@ -19,12 +20,12 @@ export default [
         path: '/about'
       },
       {
-        ...User,
-        path: '/user'
-      },
-      {
         ...Login,
         path: '/login'
+      },
+      {
+        ...Callback,
+        path: '/callback'
       },
       {
         ...NotFound

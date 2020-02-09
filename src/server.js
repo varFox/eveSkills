@@ -15,30 +15,71 @@ import { store } from './store';
 import { assetsByChunkName } from '../dist/public/stats.json';
 
 const app = express();
-dotenv.config()
-// console.log(process.env.REACT_APP_CLIENT_ID)
-
-app.use(express.static('dist/public'));
+const fs = require('fs');
+dotenv.config();
+let objTokens = {
+  users: []
+};
+let postBody, character;
+app.use(express.static('dist/public'))
+   .use(express.json());
 
 app.get("/callback", function(req,res, next){
-  // console.log(process.env.REACT_APP_CLIENT_ID)
 
-  console.log(req.query.code);
   const data = {
     grant_type: 'authorization_code',
     code: `${req.query.code}` 
   };
+
   const config =  {
     headers: {
       'Authorization': `Basic ${Base64.encode(`${process.env.REACT_APP_CLIENT_ID}:${process.env.REACT_APP_KEY}`)}`,
       'Content-Type': 'application/json'
     }
   };
-  const response = axios.post('https://login.eveonline.com/oauth/token', data, config)
-    .then((res) => console.log(res))
-    .catch(err => console.log(err));
-  console.log(response);
-  next();
+
+  axios.post('https://login.eveonline.com/oauth/token', data, config).then((r) => {
+    postBody = {
+      code: req.query.code,
+      token: r.data.access_token,
+      refresh: r.data.refresh_token,
+      expires_in: r.data.expires_in,
+      date: new Date()
+    };
+    fs.readFile('db.json', function readFileCallback(err, d) {
+      if (err) {
+        // console.log(err);
+      } else {
+        objTokens = JSON.parse(d);
+        objTokens.users.push(postBody);
+        fs.writeFileSync('db.json', JSON.stringify(objTokens));
+      }
+    });
+
+      
+const configGet =  {
+          headers: {
+            'Authorization': `Bearer ${postBody.token}`
+          }
+        };
+
+    axios.get(`https://login.eveonline.com/oauth/verify`, configGet)
+          .then(r => {
+            character = r.data.CharacterName;
+            res.redirect('/');
+          });
+    
+  });
+
+  
+  // console.log(getToken);
+  // .catch(err => console.log(err));
+});
+
+app.use("/info/", function(req, res, next) {
+  console.log(character);
+  if (character) {res.json({ character: character })}
+  else next();
 });
 
 // eslint-disable-next-line no-shadow

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import SkillService from '../services/skillService';
 
 import { fetchToken } from '../store/actions';
 
@@ -7,15 +8,25 @@ const url = `https://login.eveonline.com/oauth/authorize?response_type=code&redi
 
 const Home = ({ authorization, fetchToken }) => {
 
+  const skills = new SkillService();
+
   useEffect(() => {
     fetchToken();
+    // skills.getResource();
   }, []);
+
+  // function f() {
+  //   skills.
+  // }
+  
+
 
   return (
     <div>
       <h1>Home</h1>
       {authorization ? <p>{authorization}</p> : <a href={url}>Login</a>}
       <br />
+      {/* <p>{skills.getResource()}</p> */}
       <button
         type="button"
         onClick={() => {

@@ -27,10 +27,12 @@ export const fetchUser = () => async dispatch => {
 
 
 export const fetchToken = () => async dispatch => {
-  let response; 
+  let response;
+  axios.defaults.withCredentials = true;
   await axios.get('http://127.0.0.1:3000/info')
     .then(res => {
-      if (res.data.character) response = res.data.character;
+      console.log(res.data);
+      if (res.data.character) response = res.data.character.char;
     });
   if(!response) response = '';
   dispatch({

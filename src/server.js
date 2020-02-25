@@ -40,7 +40,6 @@ dotenv.config();
 let user = {
   users: []
 };
-let postBody, character;
 app.use(express.static('dist/public'))
   .use(express.json())
   .use(cors({origin: true, credentials: true}))
@@ -72,12 +71,15 @@ app.get("/callback", function (req, res, next) {
 
     axios.post('https://login.eveonline.com/oauth/token', data, config).then((r) => {
 
-      req.session.code = Base64.encode(`3rAk${+(new Date()) * Math.floor(Math.random() * (4000 - 50 + 1)) + 50}So`);
-      postBody = {
+      // const code = +(new Date()) * Math.floor(Math.random() * (4000 - 50 + 1)) + 50;
+      // console.log('code', code)
+      req.session.code = Base64.encode(+(new Date()) * Math.floor(Math.random() * (4000 - 50 + 1)) + 50);
+      req.session.token = Base64.encode(r.data.access_token);
+      const postBody = {
         code: req.session.code,
         token: r.data.access_token,
         refresh: r.data.refresh_token,
-        date: new Date()
+        date: +new Date()
       };
       
       const configGet = {
@@ -101,40 +103,86 @@ app.get("/callback", function (req, res, next) {
           });
 
           req.session.save(() => res.redirect('http://127.0.0.1:3001/'))
-
-          
         });
 
     })
     .catch(error => console.log(error));
 
-  }
+  } else next();
 
 });
 
+
+// тут происходит основная работа с базой (а точнее db.json)
 app.get("/info", function (req, res, next) {
 
+  // в любом случае сначала читаем файл
   fs.readFile('db.json', (err, d) => {
     if (!err) {
       const data = JSON.parse(d);
-      const char = data.users.filter(user => user.code === req.session.code);
-      if (char.length === 1) {
+      const index = data.users.findIndex(user => user.code === req.session.code);
+      
+      // действия на случай, если пользователь хочет разлогинится
+      if (Object.keys(req.query).length !== 0 && req.query.logout && index > -1) { 
+        data.users.splice(index, 1);
+        fs.writeFileSync('db.json', JSON.stringify(data));
+        req.session.destroy();
+        res.json({ })
+      } 
+
+      // для того, чтобы обновить токен на info нужно отправить токен
+      else if (Object.keys(req.query).length !== 0 && req.query.token && index > -1) { 
+        const user = data.users[index];
+        data.users.splice(index, 1);
+        const postData = {
+          grant_type: 'refresh_token',
+          refresh_token: `${user.refresh}`
+        };
+
+        const config = {
+          headers: {
+            'Authorization': `Basic ${Base64.encode(`${process.env.REACT_APP_CLIENT_ID}:${process.env.REACT_APP_KEY}`)}`,
+            'Content-Type': 'application/json'
+          }
+        };
+
+        axios.post('https://login.eveonline.com/oauth/token', postData, config).then((r) => {
+
+          user.token = r.data.access_token;
+          user.date = +new Date();
+          
+          data.users.push(user);
+
+          fs.writeFileSync('db.json', JSON.stringify(data));
+          console.log('обновление токена')
+          res.json({
+            character: {
+              charId: user.idChar,
+              char: user.char,
+              token: user.token,
+              date: user.date
+            }
+          })
+
+        })
+        .catch(error => console.log(error));
+
+      } 
+      
+      // первый раз получаем токен
+      else if (index > -1) {
+        console.log('уже есть токен')
         res.json({
           character: {
-            charId: char[0].idChar,
-            char: char[0].char,
-            token: char[0].token
+            charId: data.users[index].idChar,
+            char: data.users[index].char,
+            token: data.users[index].token,
+            date: data.users[index].date
           }
         })
       } else next();
     } else next();
   });
-  // if (character) {
-  //   res.json({
-  //     character: character
-  //   })
-  // } else 
-  // next();
 });
 
 // eslint-disable-next-line no-shadow
@@ -158,6 +206,8 @@ const renderer = (req, store, context) => {
       <link rel="stylesheet" type="text/css" href="/${
         assetsByChunkName.main[0]
       }" />
+      <link href="https://fonts.googleapis.com/css?family=Roboto:400,500|Staatliches&display=swap" rel="stylesheet">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap-grid.min.css" rel="stylesheet">
       <title>Document</title>
     </head>
     <body>

@@ -1,10 +1,10 @@
-import { FETCH_USER } from '../types';
+import { FETCH_ATTRIBUTES } from '../types';
 
-const initialState = [];
+const initialState = '';
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_USER:
+    case FETCH_ATTRIBUTES:
       return action.payload;
 
     default:

@@ -1,3 +1,4 @@
-export const SET_HELLO = 'SET_HELLO';
-export const FETCH_USER = 'FETCH_USER';
 export const FETCH_TOKEN = 'FETCH_TOKEN';
+export const FETCH_PUBLIC_INFO = 'FETCH_PUBLIC_INFO';
+export const FETCH_ATTRIBUTES = 'FETCH_ATTRIBUTES';
+

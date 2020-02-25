@@ -1,10 +1,10 @@
-import { SET_HELLO } from '../types';
+import { FETCH_PUBLIC_INFO } from '../types';
 
 const initialState = '';
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case SET_HELLO:
+    case FETCH_PUBLIC_INFO:
       return action.payload;
 
     default:

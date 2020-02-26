@@ -1,4 +1,5 @@
 export const FETCH_TOKEN = 'FETCH_TOKEN';
+export const DELETE_TOKEN = 'DELETE_TOKEN';
 export const FETCH_PUBLIC_INFO = 'FETCH_PUBLIC_INFO';
 export const FETCH_ATTRIBUTES = 'FETCH_ATTRIBUTES';
 

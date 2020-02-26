@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import SkillService from '../services/skillService';
 import { logoutUser, refreshToken } from '../services/serverService';
-import { fetchToken, getPublicInfo, getAttributes } from '../store/actions';
+import { fetchToken, deleteToken, getPublicInfo, getAttributes } from '../store/actions';
 import CharInfo from './home/charInfo';
 
 const url = `https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=${process.env.REACT_APP_CALLBACK}&client_id=${process.env.REACT_APP_CLIENT_ID}&scope=${process.env.REACT_APP_SCOPES}`
@@ -16,35 +16,50 @@ class Home extends Component {
   }
   
   componentDidUpdate = (prevProps) => {
-    const { authorization, getPublicInfo, getAttributes } = this.props;
+    const { authorization, fetchToken, getPublicInfo, getAttributes } = this.props;
+
     if (authorization !== prevProps.authorization &&
         authorization.charId) {
-      const time = new Date() - authorization.date + 1080000;
+      const time = authorization.date + 1080000 - +(new Date());
+      
       if (time > 2000) {
+        console.log('поставил сет тайм аут')
         setTimeout(() => refreshToken(authorization.token), time);
+        getPublicInfo(authorization.charId);
+        getAttributes(authorization);
       } else {
-        refreshToken(authorization.token);
+        console.log('сразу выполнил рефреш')
+        refreshToken(authorization.token)
       }
 
-      getPublicInfo(authorization.charId);
-      getAttributes(authorization);
-      
     }
   }
 
   render() {
-    const { authorization, fetchToken, publicInfo } = this.props;
+    const { authorization, publicInfo, attributes, deleteToken } = this.props;
     return ( 
       <div className='container container-back'>
         <div className="row">
         <header>
           <h1>eveSkills</h1>
-          { authorization ? <div><p> { authorization.char} </p> <button type="button" onClick={() => {logoutUser(); fetchToken()}}>Logout</button> </div> : <a href={url}>Login</a> }
+          { authorization ? (
+            <div>
+              <p> { authorization.char} </p>
+              <button 
+                type="button"
+                onClick={() => {
+                  logoutUser();
+                  deleteToken();
+                }}>Logout
+              </button>
+            </div>
+          ) : <a href={url}>Login</a> }
         </header>
         <main>
           <CharInfo 
             authorization={authorization}
             publicInfo={publicInfo}
+            attributes={attributes}
           />
 
         </main>
@@ -64,13 +79,15 @@ const loadData = (store, param) => {
 const mapStateToProps = state => ({
 
   authorization: state.authorization,
-  publicInfo: state.publicInfo
+  publicInfo: state.publicInfo,
+  attributes: state.attributes
 });
 
 const mapDispatchToProps = {
   fetchToken,
   getPublicInfo,
-  getAttributes
+  getAttributes,
+  deleteToken
 };
 
 export default {

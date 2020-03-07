@@ -1,38 +1,23 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
 import React from 'react';
-import {
-  renderToString
-} from 'react-dom/server';
-import {
-  StaticRouter
-} from 'react-router-dom';
-import {
-  matchRoutes,
-  renderRoutes
-} from 'react-router-config';
+import { renderToString } from 'react-dom/server';
+import { StaticRouter } from 'react-router-dom';
+import { matchRoutes, renderRoutes } from 'react-router-config';
 import express from 'express';
-import {
-  Provider
-} from 'react-redux';
+import { Provider } from 'react-redux';
 import serialize from 'serialize-javascript';
 import '@babel/polyfill';
 import axios from 'axios';
-import {
-  Base64
-} from 'js-base64';
+import { Base64 } from 'js-base64';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import session from 'express-session';
-
+import YAML from 'yaml';
 
 import Routes from './Routes';
-import {
-  store
-} from './store';
-import {
-  assetsByChunkName
-} from '../dist/public/stats.json';
+import { store } from './store';
+import { assetsByChunkName } from '../dist/public/stats.json';
 
 const app = express();
 const fs = require('fs');
@@ -40,6 +25,49 @@ dotenv.config();
 let user = {
   users: []
 };
+
+fs.readFile('skills.json', (err, d) => {
+  if (!err) {
+    const skills = JSON.parse(d);
+    // файл skills.json обязательно должен быть, если файлы на еве обновились достаточно удалить данные из этого файла 
+    if (!skills.categoryID) {
+      // 16 id category it's skills
+      const category = JSON.parse(JSON.stringify(YAML.parseDocument(fs.readFileSync('./fsd/categoryIDs.yaml', 'utf8'))))['16'];
+      category.categoryID = 16;
+      const groups = YAML.parseDocument(fs.readFileSync('./fsd/groupIDs.yaml', 'utf8'));      // все файлы взяты из ресурсов евы
+      const types = YAML.parseDocument(fs.readFileSync('./fsd/typeIDs.yaml', 'utf8'));        // https://developers.eveonline.com/resource/resources
+      const typeDogma = YAML.parseDocument(fs.readFileSync('./fsd/typeDogma.yaml', 'utf8'));  // при обновлении дынных в игре, стоих обновить эти файлы
+      category.groups = groups.contents.items                     // добавляем массив группы скилов
+        .filter(item => item.value.items[2].value.value === category.categoryID)
+        .map(item => {
+          const group = JSON.parse(JSON.stringify(item));
+          group[Object.keys(group)].groupID = item.key.value;
+          group[Object.keys(group)].types = types.contents.items  // группам скилов добавляем типы
+            .filter(item => ((item.value.items[2].value.value === group[Object.keys(group)].groupID) && (item.value.items[2].key.value === 'groupID')))
+            .map(item => {
+              const type = JSON.parse(JSON.stringify(item));
+              type[Object.keys(type)].typeID = item.key.value;
+              typeDogma.contents.items                            // типам добовляем догма аттрибуты и эффекты
+                .filter(item => item.key.value === type[Object.keys(type)].typeID)
+                .map(item => {
+                  const dogma = JSON.parse(JSON.stringify(item));
+                  type[Object.keys(type)].dogmaAttributes = dogma[Object.keys(dogma)[0]].dogmaAttributes;
+                  type[Object.keys(type)].dogmaEffects = dogma[Object.keys(dogma)[0]].dogmaEffects;
+                });
+              return type[Object.keys(type)] 
+            });
+          return group[Object.keys(group)] 
+        });
+
+      fs.writeFileSync('skills.json', JSON.stringify(category));
+      console.log('готово');
+    } else {
+      console.log('и так сойдёт');
+    }
+  }
+});
+
+
 app.use(express.static('dist/public'))
   .use(express.json())
   .use(cors({origin: true, credentials: true}))
@@ -117,7 +145,7 @@ app.get("/callback", function (req, res, next) {
 app.get("/info", function (req, res, next) {
 
   // в любом случае сначала читаем файл
-  fs.readFile('db.json', (err, d) => {
+  fs.readFile('db.json', function (err, d) {
     if (!err) {
       const data = JSON.parse(d);
       const index = data.users.findIndex(user => user.code === req.session.code);
@@ -184,6 +212,33 @@ app.get("/info", function (req, res, next) {
     } else next();
   });
 });
+
+// app.get("/skills", (req, res, next) =>{
+//   console.log('data')
+//   fs.readFile('skills.json', async (err, d) => {
+//     console.log('data2')
+//     if (!err) {
+//       const data = JSON.parse(d);
+//       console.log(data.length)
+//       if (data.length === undefined) {
+//         const response = await new Swagger(specUrl)
+//           .then(client => client.apis.Universe.get_universe_categories_category_id({
+//             'category_id': '16',
+//             'datasource': 'tranquility',
+//             'language': 'en-us'
+//           }))
+//           .then(res => console.log(res.body));
+
+//         console.log(response)
+//       }
+
+      
+//     }
+//   });
+
+  
+//       next()
+// });
 
 // eslint-disable-next-line no-shadow
 const renderer = (req, store, context) => {

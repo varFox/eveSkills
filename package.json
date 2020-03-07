@@ -5,7 +5,7 @@
   "author": "Lyubov",
   "license": "MIT",
   "scripts": {
-    "start": "node ./dist/server.js",
+    "start": "node --max_old_space_size=20000 ./dist/server.js",
     "dev": "webpack-dev-server --config ./webpack.config.dev.js --mode development",
     "build:spa": "webpack -p --config ./webpack.config.spa.js --mode production",
     "build:client": "webpack -p --config ./webpack.config.client.js --mode production",
@@ -61,6 +61,7 @@
     "log-timestamp": "^0.3.0",
     "node-localstorage": "^2.1.5",
     "react": "^16.8.6",
+    "react-cookie": "^4.0.3",
     "react-dom": "^16.8.6",
     "react-redux": "^7.1.0",
     "react-router-config": "^5.0.1",
@@ -68,6 +69,8 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "serialize-javascript": "^1.7.0",
-    "swagger-client": "^3.10.0"
+    "swagger-client": "^3.10.0",
+    "universal-cookie": "^4.0.3",
+    "yaml": "^1.7.2"
   }
 }

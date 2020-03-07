@@ -1,57 +1,105 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 body {
   background: url('./images/eveSkills-background.jpg') no-repeat;
   background-size: cover;
   font-family: Roboto;
   font-size: 16px;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  box-shadow:0 0 0 50vh rgba(0, 0, 0, .6) inset;
+  // box-shadow: 0 0 0 50vh rgba(0, 0, 0, .6) inset;
   color: #fff;
+
   button {
     border: none;
-    &:active, &:focus {
+
+    &:active,
+    &:focus {
       border: none;
       background-color: #eee;
       outline: none;
     }
   }
+
   .container-back {
     min-height: 100vh;
     padding: 0 25px;
     background-color: rgba($color: #000000, $alpha: .8);
+
     header {
       width: 100%;
       height: 50px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+
       h1 {
         font-family: Staatliches;
         margin: 0px 0px;
       }
+
       p {
         display: inline-block;
         font-weight: 500;
       }
-      a, button {
+
+      a,
+      button {
         color: #fff;
         text-decoration: none;
         text-transform: uppercase;
         margin-left: 50px;
+
         &:active {
           color: #aaa;
         }
       }
+
       button {
         background: transparent;
       }
     }
+
     main {
       width: 100%;
+
       .personalBlock {
         width: 100%;
         height: 400px;
+
+        &__skillPoints {
+
+          .skillPoint {
+            width: 45px;
+            height: 47px;
+            display: inline-block;
+            position: relative;
+
+            p,
+            img {
+              width: 100%;
+              height: 100%;
+              position: absolute;
+              left: 0;
+              top: 0;
+            }
+
+            p {
+              text-align: center;
+              line-height: 47px;
+            }
+
+            img {
+              opacity: .65;
+              border-radius: 50%;
+            }
+
+          }
+
+        }
+
       }
     }
   }

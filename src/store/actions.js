@@ -104,6 +104,7 @@ export const getAttributes = ({ charId, token }) => async dispatch => {
 };
 
 export const getCharacterSkills = ({ charId, token }) => async dispatch => {
+
   if (charId && token) {
     let response;
     if (localStorage.getItem('characterSkills')) {
@@ -123,6 +124,7 @@ export const getCharacterSkills = ({ charId, token }) => async dispatch => {
       payload: response
     });
   }
+
 };
 
 export const getAllSkills = () => async dispatch => {
@@ -131,17 +133,13 @@ export const getAllSkills = () => async dispatch => {
   if (localStorage.getItem('allSkills')) {
     response = JSON.parse(localStorage.getItem('allSkills'));
   } else {
-    response = await new Swagger(specUrl)
-      .then(client => client.apis.Universe.get_universe_categories_category_id({
-        'category_id': '16',
-        'datasource': 'tranquility',
-        'language': 'en-us'
-      }))
-      .then(res => res.body);
+    response = await axios.get('http://127.0.0.1:3000/skills');
+    response = response.data;
     localStorage.setItem('allSkills', JSON.stringify(response));
   }
   dispatch({
     type: FETCH_ALL_SKILLS,
     payload: response
   });
+
 };

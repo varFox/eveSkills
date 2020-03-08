@@ -4,23 +4,14 @@ import authorization from './authorization';
 import publicInfo from './publicInfo';
 import attributes from './attributes';
 import characterSkills from './characterSkills';
-import allSkills from './allSkills';
-
-// export default combineReducers({
-//   authorization,
-//   publicInfo,
-//   attributes
-// });
-
-
-
+import universe from './universe';
 
 const appReducer = combineReducers({
   authorization,
   publicInfo,
   attributes,
   characterSkills,
-  allSkills
+  universe
 })
 
 export default (state, action) => {

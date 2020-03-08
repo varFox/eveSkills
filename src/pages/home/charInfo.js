@@ -1,9 +1,9 @@
 import React from 'react';
-import perception from '../../images/percetion.jpg';
-import memory from '../../images/memory.jpg';
-import willpower from '../../images/willpower.jpg';
-import intelligence from '../../images/intelligence.jpg';
-import charisma from '../../images/charisma.jpg';
+import perception from '../../images/34_64_12.png';
+import memory from '../../images/31_64_15.png';
+import willpower from '../../images/34_64_15.png';
+import intelligence from '../../images/31_64_16.png';
+import charisma from '../../images/31_64_14.png';
 
 
 const CharInfo = ({ publicInfo, attributes, characterSkills }) => {

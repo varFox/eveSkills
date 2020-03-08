@@ -38,7 +38,7 @@ class Home extends Component {
 
   render() {
     // eslint-disable-next-line no-shadow
-    const { authorization, publicInfo, attributes, deleteToken, characterSkills } = this.props;
+    const { authorization, publicInfo, attributes, universe, deleteToken, characterSkills } = this.props;
     return ( 
       <div className='container container-back'>
         <div className="row">
@@ -63,6 +63,7 @@ class Home extends Component {
               publicInfo={publicInfo}
               attributes={attributes}
               characterSkills={characterSkills}
+              universe={universe}
             />
           </main>
         </div>
@@ -81,7 +82,8 @@ const mapStateToProps = state => ({
   authorization: state.authorization,
   publicInfo: state.publicInfo,
   attributes: state.attributes,
-  characterSkills: state.characterSkills
+  characterSkills: state.characterSkills,
+  universe: state.universe
 });
 
 const mapDispatchToProps = {

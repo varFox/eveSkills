@@ -81,7 +81,7 @@ app.use(express.static('dist/public'))
     }
   }));
 
-app.get("/callback", function (req, res, next) {
+app.get('/callback', function (req, res, next) {
 
   if (req.query.code) {
 
@@ -142,7 +142,7 @@ app.get("/callback", function (req, res, next) {
 
 
 // тут происходит основная работа с базой (а точнее db.json)
-app.get("/info", function (req, res, next) {
+app.get('/info', function (req, res, next) {
 
   // в любом случае сначала читаем файл
   fs.readFile('db.json', function (err, d) {
@@ -213,32 +213,15 @@ app.get("/info", function (req, res, next) {
   });
 });
 
-// app.get("/skills", (req, res, next) =>{
-//   console.log('data')
-//   fs.readFile('skills.json', async (err, d) => {
-//     console.log('data2')
-//     if (!err) {
-//       const data = JSON.parse(d);
-//       console.log(data.length)
-//       if (data.length === undefined) {
-//         const response = await new Swagger(specUrl)
-//           .then(client => client.apis.Universe.get_universe_categories_category_id({
-//             'category_id': '16',
-//             'datasource': 'tranquility',
-//             'language': 'en-us'
-//           }))
-//           .then(res => console.log(res.body));
+app.get('/skills', function (req, res, next) {
+  fs.readFile('skills.json', function (err, d) {
+    if (!err) {
+      // const data = JSON.parse(d);
+      res.json(JSON.parse(d))
+    } else next();
+  })
+})
 
-//         console.log(response)
-//       }
-
-      
-//     }
-//   });
-
-  
-//       next()
-// });
 
 // eslint-disable-next-line no-shadow
 const renderer = (req, store, context) => {

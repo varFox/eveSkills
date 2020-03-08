@@ -6,7 +6,7 @@ import intelligence from '../../images/31_64_16.png';
 import charisma from '../../images/31_64_14.png';
 
 
-const CharInfo = ({ publicInfo, attributes, characterSkills }) => {
+const CharInfo = ({ publicInfo, attributes, universe, characterSkills }) => {
   return (
     <div className='personalBlock'>
       <div className='personalBlock__avatar'>
@@ -39,6 +39,9 @@ const CharInfo = ({ publicInfo, attributes, characterSkills }) => {
             <img src={charisma} alt='charisma'/>
             <p>{attributes.charisma}</p>
           </div>
+        </div>
+        <div className='personalBlock__skills'>
+
         </div>
       </div>
     </div>

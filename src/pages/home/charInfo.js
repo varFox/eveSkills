@@ -11,13 +11,6 @@ const CharInfo = ({ publicInfo, attributes, universe, characterSkills }) => {
     <div className='personalBlock'>
       <div className='personalBlock__avatar'>
         <img src={publicInfo.portrait} />
-      </div>
-      <div className='personalBlock__info'>
-        <span>Character</span><p>{publicInfo.name}</p>
-        <span>Corporation</span><p>{publicInfo.corporation_name}</p>
-        <span>Total SP</span><p>{characterSkills.total_sp}</p>
-        <span>Unallocated SP</span><p>{characterSkills.unallocated_sp}</p>
-        <span>Skill points</span>
         <div className='personalBlock__skillPoints' >
           <div className='skillPoint' title='perception'>
             <img src={perception} alt='percetion'/>
@@ -40,12 +33,67 @@ const CharInfo = ({ publicInfo, attributes, universe, characterSkills }) => {
             <p>{attributes.charisma}</p>
           </div>
         </div>
-        <div className='personalBlock__skills'>
-
-        </div>
+      </div>
+      <div className='personalBlock__info'>
+        <span>Character</span><p>{publicInfo.name}</p>
+        <span>Corporation</span><p>{publicInfo.corporation_name}</p>
+        <span>Total SP</span><p>{characterSkills.total_sp}</p>
+        <span>Unallocated SP</span><p>{characterSkills.unallocated_sp}</p>
+        
+      </div>  
+      <div className='personalBlock__skills'>
+        <h2>Skills</h2>
+        <SkillsBlock 
+          universe={universe}
+          characterSkills={characterSkills}
+        />
       </div>
     </div>
   );
 };
+
+const SkillsBlock = ({universe, characterSkills}) => {
+  
+  const renderItems = (groupsSkills) => {
+    return groupsSkills.map(group => {     
+      if(group.published) {
+        let i = 0;
+        group.types.map(type => {
+          characterSkills.skills.map(skill => {
+            if (skill.skill_id === type.typeID) {
+              return i += skill.trained_skill_level;
+            }
+          });
+          return i;
+        });
+        const sum = group.types.length * 5;
+        const widthBlock = {
+          width: `${Math.round(100 * i / sum)}%`
+        }
+        return (
+          <div
+            key={group.groupID}
+            className='personalBlock__skillsGroup'>
+            <div className='bgSkills' style={widthBlock}></div>
+            <span>{group.name.en}</span>
+            <p title='mastering the degree'>{i}/{sum}</p>
+          </div>
+        )
+      }
+    });
+  }
+
+  if(!universe.groups || !characterSkills) {
+    return <></>
+  }
+  const items = renderItems(universe.groups)
+  return (
+    <div className='personalBlock__skillsGroups'>
+      
+        {items}
+      
+    </div>
+  );
+}
 
 export default CharInfo;

@@ -5,11 +5,12 @@
 }
 
 body {
-  background: url('./images/eveSkills-background.jpg') no-repeat;
+  background: linear-gradient(45deg, rgba(#000000, .4), rgba(#000000, .6)), url('./images/eveSkills-background.jpg');
   background-size: cover;
+  background-attachment:fixed;
+  background-blend-mode: darken;
   font-family: Roboto;
   font-size: 16px;
-  // box-shadow: 0 0 0 50vh rgba(0, 0, 0, .6) inset;
   color: #fff;
 
   button {
@@ -27,6 +28,7 @@ body {
     min-height: 100vh;
     padding: 0 25px;
     background-color: rgba($color: #000000, $alpha: .8);
+    background-attachment:fixed;
 
     header {
       width: 100%;
@@ -68,7 +70,16 @@ body {
       .personalBlock {
         width: 100%;
         height: 400px;
-
+        padding: 20px 0;
+        display: flex;
+        
+        &__avatar {
+          width: 360px;
+          img {
+            width: 220px;
+          }
+        }
+        
         &__skillPoints {
 
           .skillPoint {
@@ -76,7 +87,8 @@ body {
             height: 47px;
             display: inline-block;
             position: relative;
-
+            cursor: context-menu;
+            margin-top: 5px;
             p,
             img {
               width: 100%;
@@ -97,6 +109,62 @@ body {
 
           }
 
+        }
+
+        &__info {
+          width: 220px;
+          margin-top: 10px;
+          span {
+            display: block;
+            font-weight: 500;
+            color: #616161
+          }
+          p {
+            margin-bottom: 10px;
+            margin-top: 3px;
+          }
+        }
+
+        &__skills {
+          width: 100%;
+          h2 {
+            text-align: center;
+            margin-bottom: 10px;
+          }
+
+    
+        }
+        &__skillsGroups {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+        }
+        &__skillsGroup {
+          width: 30%;
+          background: #311200;
+          margin: 3px;
+          padding: 3px 5px;
+          display: flex;
+          justify-content: space-between;
+          position: relative;
+          font-size: 14px;
+          span {
+            display: block;
+            z-index: 100;
+          }
+          label, p {
+            font-size: 12px;
+            z-index: 100;
+          }
+          .bgSkills {
+            width: 50%;
+            height: 100%;
+            background-color: #5a2101;
+            position: absolute;
+            top: 0;
+            left: 0;
+          }
+            
         }
 
       }

@@ -62,3 +62,4 @@ typings/
 # build output
 .next
 dist
+db.json
